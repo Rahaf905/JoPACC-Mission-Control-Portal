@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>JoMoPay Fuzzy Growth Quality</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 40px;
+        }
+
+        .form-field {
+            margin-bottom: 12px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        input {
+            display: block;
+            width: 300px;
+            padding: 6px;
+        }
+
+        button {
+            display: block;
+            margin-top: 20px;
+            padding: 10px;
+        }
+
+        .box {
+            margin-top: 25px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background: #fafafa;
+        }
+
+        .home-link {
+            display: inline-block;
+            margin-top: 25px;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>JoMoPay Fuzzy Growth Quality</h2>
+
+    <p>
+        Enter the JoMoPay growth indicators to calculate
+        the growth quality score.
+    </p>
+
+    <form method="POST">
+
+        <div class="form-field">
+            <label>Transaction Growth (%)</label>
+
+            <input type="number"
+                   step="any"
+                   name="transaction_growth"
+                   required>
+        </div>
+
+        <div class="form-field">
+            <label>User Growth (%)</label>
+
+            <input type="number"
+                   step="any"
+                   name="user_growth"
+                   required>
+        </div>
+
+        <div class="form-field">
+            <label>Purchase Share (%)</label>
+
+            <input type="number"
+                   step="any"
+                   name="purchase_share"
+                   required>
+        </div>
+
+        <div class="form-field">
+            <label>Cash-out Dependency (%)</label>
+
+            <input type="number"
+                   step="any"
+                   name="cashout_dependency"
+                   required>
+        </div>
+
+        <button type="submit">
+            Calculate Growth Quality
+        </button>
+
+    </form>
+
+    {% if growth_score is defined and growth_score is not none %}
+
+        <div class="box">
+
+            <h3>Fuzzy Growth Quality Result</h3>
+
+            <p>
+                <b>Growth Quality Score:</b>
+                {{ growth_score }}
+            </p>
+
+            <p>
+                <b>Growth Quality Level:</b>
+                {{ growth_level }}
+            </p>
+
+            <p>
+                <b>Explanation:</b>
+                {{ explanation }}
+            </p>
+
+            {% if activated_rules %}
+
+                <h4>Activated Rules</h4>
+
+                <ul>
+
+                    {% for item in activated_rules %}
+
+                        <li>
+                            {{ item.rule }}
+                            — Activation:
+                            {{ item.activation }}
+                        </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+    <a href="/home" class="home-link">
+        ← Return to Home
+    </a>
+
+</body>
+
+</html>

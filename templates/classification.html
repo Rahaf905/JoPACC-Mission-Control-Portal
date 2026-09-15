@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Classification Prediction</title>
+</head>
+
+<body>
+
+    <h1>Classification Prediction and Explanation</h1>
+
+    <p>
+        Enter the payment-system information to predict
+        its activity level.
+    </p>
+
+    <form method="POST" action="/classification">
+
+        <label for="report_year">Report Year:</label>
+        <input type="number"
+               id="report_year"
+               name="report_year"
+               required>
+
+        <br><br>
+
+        <label for="report_month_number">
+            Report Month Number:
+        </label>
+        <input type="number"
+               id="report_month_number"
+               name="report_month_number"
+               min="1"
+               max="12"
+               required>
+
+        <br><br>
+
+        <label for="users_total">Total Users:</label>
+        <input type="number"
+               id="users_total"
+               name="users_total"
+               min="0"
+               required>
+
+        <br><br>
+
+        <label for="transactions_total">
+            Total Transactions:
+        </label>
+        <input type="number"
+               id="transactions_total"
+               name="transactions_total"
+               min="0"
+               required>
+
+        <br><br>
+
+        <label for="customer_legal_entity_count">
+            Legal Entity Customers Count:
+        </label>
+        <input type="number"
+               id="customer_legal_entity_count"
+               name="customer_legal_entity_count"
+               min="0"
+               required>
+
+        <br><br>
+
+        <label for="wallet_individual_count">
+            Individual Wallets Count:
+        </label>
+        <input type="number"
+               id="wallet_individual_count"
+               name="wallet_individual_count"
+               min="0"
+               required>
+
+        <br><br>
+
+        <label for="user_new_count">
+            New Users Count:
+        </label>
+        <input type="number"
+               id="user_new_count"
+               name="user_new_count"
+               min="0"
+               required>
+
+        <br><br>
+
+        <label for="tx_purchases_count">
+            Purchases Count:
+        </label>
+        <input type="number"
+               id="tx_purchases_count"
+               name="tx_purchases_count"
+               min="0"
+               required>
+
+        <br><br>
+
+        <label for="tx_money_transfers_count">
+            Money Transfers Count:
+        </label>
+        <input type="number"
+               id="tx_money_transfers_count"
+               name="tx_money_transfers_count"
+               min="0"
+               required>
+
+        <br><br>
+
+        <label for="ef_digital_payment_count">
+            eFAWATEERcom Digital Payment Count:
+        </label>
+        <input type="number"
+               id="ef_digital_payment_count"
+               name="ef_digital_payment_count"
+               min="0"
+               required>
+
+        <br><br>
+
+        <label for="ach_jod_transaction_count">
+            ACH JOD Transaction Count:
+        </label>
+        <input type="number"
+               id="ach_jod_transaction_count"
+               name="ach_jod_transaction_count"
+               min="0"
+               required>
+
+        <br><br>
+
+        <label for="returned_cheque_count">
+            Returned Cheque Count:
+        </label>
+        <input type="number"
+               id="returned_cheque_count"
+               name="returned_cheque_count"
+               min="0"
+               required>
+
+        <br><br>
+
+        <label for="system">Payment System:</label>
+
+        <select id="system"
+                name="system"
+                required>
+
+            <option value="">
+                Select a payment system
+            </option>
+
+            <option value="ACH">ACH</option>
+            <option value="CliQ">CliQ</option>
+            <option value="ECCU">ECCU</option>
+            <option value="JoMoPay">JoMoPay</option>
+            <option value="eFAWATEERcom">
+                eFAWATEERcom
+            </option>
+
+        </select>
+
+        <br><br>
+
+        <button type="submit">
+            Validate, Predict and Explain
+        </button>
+
+    </form>
+
+
+    <!-- Displayed only when the input is anomalous -->
+
+    {% if anomaly_result is defined
+          and anomaly_result.is_anomalous %}
+
+        <hr>
+
+        <h2>Input Validation Result</h2>
+
+        <p>
+            <strong>Anomaly Label:</strong>
+            {{ anomaly_result.label }}
+        </p>
+
+        <p>
+            <strong>Anomaly Score:</strong>
+            {{ anomaly_result.score }}
+        </p>
+
+        <p>
+            {{ anomaly_result.explanation }}
+        </p>
+
+        <h3>Unusual Input Features</h3>
+
+        <table border="1">
+
+            <tr>
+                <th>Feature</th>
+                <th>Entered Value</th>
+                <th>Historical Minimum</th>
+                <th>Historical Maximum</th>
+                <th>Reason</th>
+            </tr>
+
+            {% for feature in
+                anomaly_result.unusual_features %}
+
+                <tr>
+                    <td>{{ feature.feature }}</td>
+                    <td>{{ feature.entered_value }}</td>
+                    <td>{{ feature.minimum }}</td>
+                    <td>{{ feature.maximum }}</td>
+                    <td>{{ feature.reason }}</td>
+                </tr>
+
+            {% endfor %}
+
+        </table>
+        <h3>Ranked Historical Anomalous Records</h3>
+
+        <table border="1">
+
+        <tr>
+            <th>Rank</th>
+            <th>Report Month</th>
+            <th>Payment System</th>
+            <th>Anomaly Score</th>
+            <th>Label</th>
+            <th>Reason</th>
+        </tr>
+
+            {% for record in ranked_anomalies %}
+
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ record.report_month }}</td>
+                    <td>{{ record.system }}</td>
+                    <td>{{ record.score_iso }}</td>
+                    <td>ANOMALOUS</td>
+                    <td>{{ record.reason }}</td>
+                </tr>
+
+            {% endfor %}
+
+        </table>
+
+
+        <p>
+            <strong>
+                Prediction and XAI explanations were not
+                generated because the input is outside
+                the model's reliable operating range.
+            </strong>
+        </p>
+
+    {% endif %}
+
+
+    {% if predicted_class is defined %}
+
+        <hr>
+
+        <h2>Prediction Result</h2>
+
+        <p>
+            The predicted activity level is:
+            <strong>{{ predicted_class }}</strong>
+        </p>
+
+        <p>
+            Prediction probability:
+            <strong>
+                {{ (probability * 100) | round(2) }}%
+            </strong>
+        </p>
+
+
+        <h2>SHAP Explanation</h2>
+
+        <table border="1">
+
+            <tr>
+                <th>Feature</th>
+                <th>Feature Value</th>
+                <th>SHAP Value</th>
+            </tr>
+
+            {% for row in shap_results %}
+
+                <tr>
+                    <td>{{ row["Feature"] }}</td>
+                    <td>{{ row["Feature Value"] }}</td>
+                    <td>{{ row["SHAP Value"] }}</td>
+                </tr>
+
+            {% endfor %}
+
+        </table>
+
+
+        <h2>LIME Explanation</h2>
+
+        <table border="1">
+
+            <tr>
+                <th>Feature</th>
+                <th>Contribution</th>
+            </tr>
+
+            {% for row in lime_results %}
+
+                <tr>
+                    <td>{{ row["Feature"] }}</td>
+                    <td>{{ row["Contribution"] }}</td>
+                </tr>
+
+            {% endfor %}
+
+        </table>
+
+
+        <h2>Gemini Explanation</h2>
+
+        <p>{{ gemini_text }}</p>
+
+    {% endif %}
+
+
+    <br><br>
+
+    <a href="/">Return to Home</a>
+
+</body>
+</html>
