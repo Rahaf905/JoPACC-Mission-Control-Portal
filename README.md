@@ -15,6 +15,10 @@ The portal was designed to analyze and support decision-making for multiple Jord
 
 The system includes four main AI components.
 
+## System Architecture
+
+![JoPACC Mission Control Portal Architecture](jopacc_architecture.png)
+
 ## 1. Supervised Prediction
 
 ### Regression
